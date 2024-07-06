@@ -12,14 +12,25 @@ import Task from './src/task'
 
 export default function App() {
   const [task, setTask] = useState('')
-  const [list, setList] = useState([
-    { key: '1', item: 'Comprar ps4' },
-    { key: '2', item: 'Comprar ps5' }
-  ])
+  const [list, setList] = useState([])
 
   function handleAdd() {
-    alert(task)
+    if (task === '') {
+      return
+    }
+    const data = {
+      key: Date.now(),
+      item: task
+    }
+    setList([...list, data])
+    setTask('')
   }
+
+  function handleDelete(key) {
+    const newList = list.filter(item => item.key !== key)
+    setList(newList)
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tarefas</Text>
@@ -37,7 +48,9 @@ export default function App() {
       <FlatList
         data={list}
         keyExtractor={item => item.key}
-        renderItem={({ item }) => <Task data={item} />}
+        renderItem={({ item }) => (
+          <Task data={item} deleteItem={() => handleDelete(item.key)} />
+        )}
         style={styles.list}
       />
     </View>
